@@ -1,0 +1,277 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg: #0d0d0d;
+    --surface: #1a1a1a;
+    --surface2: #222;
+    --border: #333;
+    --text: #e0e0e0;
+    --muted: #777;
+    --accent: #00c87a;
+    --gate-color: #f5a623;
+    --danger: #e04040;
+    --danger-hover: #ff5555;
+    --font: 'JetBrains Mono', 'Fira Mono', 'Courier New', monospace;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 13px;
+    min-height: 100vh;
+}
+
+/* ── Header ── */
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.logo {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent);
+}
+
+.subtitle { color: var(--muted); font-size: 11px; }
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* ── Form elements ── */
+
+select, button, input[type="text"], input[type="number"] {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    font-family: var(--font);
+    font-size: 12px;
+    padding: 5px 8px;
+    border-radius: 3px;
+    outline: none;
+    appearance: none;
+}
+
+select { padding-right: 24px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23777'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; }
+
+input:focus, select:focus { border-color: var(--accent); }
+
+button { cursor: pointer; transition: background 0.1s; }
+button:hover { background: #2e2e2e; }
+button:disabled { opacity: 0.4; cursor: default; }
+button:active { transform: translateY(1px); }
+
+#connect-btn { min-width: 90px; }
+
+/* ── Status dot ── */
+
+.status { font-size: 18px; cursor: default; line-height: 1; }
+.status.off    { color: #444; }
+.status.connecting { color: var(--gate-color); animation: blink 0.8s step-end infinite; }
+.status.on     { color: var(--accent); }
+.status.error  { color: var(--danger); }
+
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── Safe mode ── */
+
+.safe-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+    font-size: 11px;
+}
+
+.safe-label input[type="checkbox"] {
+    accent-color: var(--accent);
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    appearance: auto;
+}
+
+/* ── Panic ── */
+
+.panic-btn {
+    background: var(--danger) !important;
+    color: #fff !important;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 5px 16px;
+    border-color: #c03030 !important;
+}
+.panic-btn:hover { background: var(--danger-hover) !important; }
+
+/* ── Main grid ── */
+
+main { padding: 20px; }
+
+.channels-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+@media (max-width: 960px) { .channels-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px)  { .channels-grid { grid-template-columns: 1fr; } }
+
+/* ── Channel strip ── */
+
+.channel-strip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ch-top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ch-num {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 15px;
+    min-width: 18px;
+    line-height: 1;
+}
+
+.ch-label {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    padding: 2px 3px;
+    color: var(--text);
+    font-size: 12px;
+    min-width: 0;
+}
+.ch-label:focus { border-bottom-color: var(--accent); }
+
+.type-btns { display: flex; gap: 2px; flex-shrink: 0; }
+
+.type-btn {
+    padding: 3px 7px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-color: #444;
+    color: var(--muted);
+}
+.type-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+.type-btn[data-type="gate"].active { background: var(--gate-color); border-color: var(--gate-color); }
+
+/* ── Channel body ── */
+
+.ch-body {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+}
+
+.cv-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+}
+
+.cv-slider {
+    flex: 1;
+    height: 4px;
+    accent-color: var(--accent);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    min-width: 0;
+}
+
+.cv-num {
+    width: 52px;
+    text-align: right;
+    padding: 3px 5px;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.cv-unit { color: var(--muted); font-size: 11px; min-width: 8px; }
+
+.gate-row { display: flex; gap: 8px; width: 100%; }
+
+.gate-trig, .gate-hold {
+    flex: 1;
+    padding: 8px;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+    border-color: #444;
+    color: var(--muted);
+    transition: background 0.1s, color 0.1s, border-color 0.1s;
+}
+.gate-trig:hover { border-color: var(--gate-color); color: var(--gate-color); }
+.gate-hold:hover { border-color: #888; color: var(--text); }
+.gate-hold.active { background: var(--gate-color); color: #000; border-color: var(--gate-color); }
+
+/* ── Meter ── */
+
+.ch-meter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.meter-bar {
+    flex: 1;
+    height: 3px;
+    background: #2a2a2a;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.meter-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    border-radius: 2px;
+    transition: width 0.04s linear;
+}
+
+.meter-val {
+    color: var(--muted);
+    font-size: 11px;
+    min-width: 44px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}

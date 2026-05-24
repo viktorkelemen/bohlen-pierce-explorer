@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ES-8 Interface</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <span class="logo">ES-8</span>
+            <span class="subtitle">Web Interface</span>
+        </div>
+        <div class="header-controls">
+            <select id="device-select"><option value="">— select device —</option></select>
+            <button id="connect-btn">Connect</button>
+            <span id="status" class="status off" title="Disconnected">●</span>
+            <label class="safe-label">
+                <input type="checkbox" id="safe-mode" checked>
+                <span>Safe 0–5V</span>
+            </label>
+            <button id="panic-btn" class="panic-btn">PANIC</button>
+        </div>
+    </header>
+
+    <main>
+        <div id="channels" class="channels-grid"></div>
+    </main>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
