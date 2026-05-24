@@ -105,12 +105,12 @@ export class ES8Controller {
         await this._cleanup();
     }
 
-    setCV(channel, volts, slewMs = null) {
+    setCV(channel, volts, slewMs = null, atTime = null) {
         if (!this.initialized || channel < 0 || channel > 7) return;
         const ch = this.channels[channel];
         const v = Math.max(0, this.safeMode ? Math.min(volts, 5) : Math.min(volts, 10));
         ch.volts = v;
-        const t = this.audioContext.currentTime;
+        const t = atTime !== null ? atTime : this.audioContext.currentTime;
 
         if (this.simMode) {
             const slew = (slewMs !== null ? slewMs : ch.slewMs) / 1000;
@@ -120,7 +120,6 @@ export class ES8Controller {
             } else {
                 ch.osc.frequency.setValueAtTime(freq, t);
             }
-            // Unmute if voltage > 0, silence if 0
             ch.gain.gain.setTargetAtTime(v > 0 ? SIM_GAIN : 0, t, 0.01);
         } else {
             const normalized = normalizeVoltage(v);
@@ -133,12 +132,12 @@ export class ES8Controller {
         }
     }
 
-    triggerGate(channel, widthMs = null, volts = 5.0) {
+    triggerGate(channel, widthMs = null, volts = 5.0, atTime = null) {
         if (!this.initialized || channel < 0 || channel > 7) return;
         const ch = this.channels[channel];
         const v = this.safeMode ? Math.min(volts, 5) : Math.min(volts, 10);
         const width = (widthMs !== null ? widthMs : ch.gateWidth) / 1000;
-        const t = this.audioContext.currentTime;
+        const t = atTime !== null ? atTime : this.audioContext.currentTime;
 
         if (this.simMode) {
             ch.gain.gain.cancelScheduledValues(t);

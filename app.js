@@ -1,4 +1,6 @@
 import { es8 } from './es8.js';
+import { BPSequencer } from './sequencer.js';
+import { BP_NOTE_NAMES } from './bp-scale.js';
 
 const STORAGE_KEY = 'es8-channel-config';
 
@@ -44,6 +46,7 @@ function saveConfig() {
 
 let config = loadConfig();
 let connected = false;
+const seq = new BPSequencer(es8);
 
 const deviceSelect = document.getElementById('device-select');
 const connectBtn = document.getElementById('connect-btn');
@@ -108,6 +111,67 @@ function renderGate(ch, i) {
             <button class="gate-hold${ch.gateHeld ? ' active' : ''}" data-i="${i}">HOLD</button>
         </div>`;
 }
+
+// ── Sequencer UI ────────────────────────────────────────────────────────────
+
+const seqPlayBtn = document.getElementById('seq-play');
+const seqBpmInput = document.getElementById('seq-bpm');
+
+function buildSeqSteps() {
+    const container = document.getElementById('seq-steps');
+    container.innerHTML = '';
+    seq.steps.forEach((s, i) => {
+        const cell = document.createElement('div');
+        const isRest = s.note === null;
+        cell.className = 'seq-cell' + (isRest ? ' rest' : '');
+        cell.dataset.i = i;
+        cell.innerHTML = `
+            <span class="seq-note">${isRest ? '—' : BP_NOTE_NAMES[s.note]}</span>
+            <span class="seq-step-num">${i + 1}</span>`;
+        cell.addEventListener('click', () => {
+            if (s.note === null) s.note = 0;
+            else if (s.note >= 12) s.note = null;
+            else s.note++;
+            buildSeqSteps();
+        });
+        container.appendChild(cell);
+    });
+}
+
+seq.onStep = (idx) => {
+    document.querySelectorAll('.seq-cell').forEach((c, i) => {
+        c.classList.toggle('playing', i === idx);
+    });
+};
+
+function seqStop() {
+    seq.stop();
+    seqPlayBtn.textContent = 'PLAY';
+    seqPlayBtn.classList.remove('playing');
+    document.querySelectorAll('.seq-cell').forEach(c => c.classList.remove('playing'));
+}
+
+seqPlayBtn.addEventListener('click', () => {
+    if (!seq.running) {
+        seq.bpm = parseInt(seqBpmInput.value) || 120;
+        seq.start();
+        seqPlayBtn.textContent = 'STOP';
+        seqPlayBtn.classList.add('playing');
+    } else {
+        seqStop();
+    }
+});
+
+seqBpmInput.addEventListener('change', () => {
+    seq.bpm = parseInt(seqBpmInput.value) || 120;
+});
+
+function updateSeqControls() {
+    seqPlayBtn.disabled = !connected;
+    if (!connected) seqStop();
+}
+
+// ── Channel UI ──────────────────────────────────────────────────────────────
 
 function buildChannels() {
     channelsEl.innerHTML = '';
@@ -205,10 +269,12 @@ function bindEvents() {
 
 connectBtn.addEventListener('click', async () => {
     if (connected) {
+        seqStop();
         await es8.disconnect();
         connected = false;
         setStatus('off', 'Disconnected');
         connectBtn.textContent = 'Connect';
+        updateSeqControls();
         return;
     }
     connectBtn.disabled = true;
@@ -224,6 +290,7 @@ connectBtn.addEventListener('click', async () => {
             if (ch.type === 'cv') es8.setCV(i, ch.cvValue || 0, 0);
             else if (ch.gateHeld) es8.setGate(i, true);
         });
+        updateSeqControls();
     } catch (e) {
         setStatus('error', 'Error: ' + e.message);
         connectBtn.textContent = 'Connect';
@@ -257,5 +324,6 @@ function tick() {
 }
 
 buildChannels();
+buildSeqSteps();
 loadDevices();
 requestAnimationFrame(tick);

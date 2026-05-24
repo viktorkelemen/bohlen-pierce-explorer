@@ -297,3 +297,127 @@ main { padding: 20px; }
     text-align: right;
     font-variant-numeric: tabular-nums;
 }
+
+/* ── Sequencer ── */
+
+.sequencer {
+    margin-top: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+}
+
+.seq-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.seq-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--muted);
+}
+
+.seq-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.seq-bpm-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.seq-bpm-label {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+#seq-bpm {
+    width: 56px;
+    text-align: center;
+}
+
+#seq-play {
+    min-width: 64px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+#seq-play:not(:disabled):hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+#seq-play.playing {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+}
+
+.seq-ch-label {
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: auto;
+}
+
+.seq-steps {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.seq-cell {
+    width: 72px;
+    height: 72px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.08s, border-color 0.08s;
+    gap: 4px;
+}
+
+.seq-cell:hover {
+    border-color: #555;
+    background: #282828;
+}
+
+.seq-cell.playing {
+    border-color: var(--accent);
+    background: #0d2a1e;
+}
+
+.seq-note {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+}
+
+.seq-cell.playing .seq-note {
+    color: var(--accent);
+}
+
+.seq-cell.rest .seq-note {
+    color: var(--muted);
+    font-size: 18px;
+}
+
+.seq-step-num {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+}

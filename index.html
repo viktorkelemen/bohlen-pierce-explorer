@@ -30,6 +30,21 @@
 
     <main>
         <div id="channels" class="channels-grid"></div>
+
+        <section class="sequencer" id="sequencer">
+            <div class="seq-header">
+                <span class="seq-title">BP MOTIVE</span>
+                <div class="seq-controls">
+                    <label class="seq-bpm-wrap">
+                        <span class="seq-bpm-label">BPM</span>
+                        <input type="number" id="seq-bpm" min="20" max="300" value="120" step="1">
+                    </label>
+                    <button id="seq-play" disabled>PLAY</button>
+                </div>
+                <span class="seq-ch-label">CH1 pitch · CH2 gate</span>
+            </div>
+            <div class="seq-steps" id="seq-steps"></div>
+        </section>
     </main>
 
     <script type="module" src="app.js"></script>
