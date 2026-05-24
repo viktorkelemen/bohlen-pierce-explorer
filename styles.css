@@ -1,16 +1,16 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-    --bg: #0d0d0d;
-    --surface: #1a1a1a;
-    --surface2: #222;
-    --border: #333;
-    --text: #e0e0e0;
-    --muted: #777;
-    --accent: #00c87a;
-    --gate-color: #f5a623;
-    --danger: #e04040;
-    --danger-hover: #ff5555;
+    --bg: #f0f0ee;
+    --surface: #ffffff;
+    --surface2: #e8e8e6;
+    --border: #ccccca;
+    --text: #1a1a1a;
+    --muted: #888;
+    --accent: #007a4a;
+    --gate-color: #c47800;
+    --danger: #cc2222;
+    --danger-hover: #ee3333;
     --font: 'JetBrains Mono', 'Fira Mono', 'Courier New', monospace;
 }
 
@@ -76,7 +76,7 @@ select { padding-right: 24px; background-image: url("data:image/svg+xml,%3Csvg x
 input:focus, select:focus { border-color: var(--accent); }
 
 button { cursor: pointer; transition: background 0.1s; }
-button:hover { background: #2e2e2e; }
+button:hover { background: #ddddd8; }
 button:disabled { opacity: 0.4; cursor: default; }
 button:active { transform: translateY(1px); }
 
@@ -85,10 +85,10 @@ button:active { transform: translateY(1px); }
 /* ── Status dot ── */
 
 .status { font-size: 18px; cursor: default; line-height: 1; }
-.status.off    { color: #444; }
+.status.off    { color: #bbb; }
 .status.connecting { color: var(--gate-color); animation: blink 0.8s step-end infinite; }
 .status.on     { color: var(--accent); }
-.status.sim    { color: #7eb8ff; }
+.status.sim    { color: #3a80d0; }
 .status.error  { color: var(--danger); }
 
 @keyframes blink { 50% { opacity: 0; } }
@@ -99,14 +99,14 @@ button:active { transform: translateY(1px); }
     display: flex;
     align-items: center;
     gap: 6px;
-    color: #7eb8ff;
+    color: #3a80d0;
     cursor: pointer;
     user-select: none;
     font-size: 11px;
 }
 
 .sim-label input[type="checkbox"] {
-    accent-color: #7eb8ff;
+    accent-color: #3a80d0;
     width: 13px;
     height: 13px;
     cursor: pointer;
@@ -208,10 +208,10 @@ main { padding: 20px; }
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.5px;
-    border-color: #444;
+    border-color: var(--border);
     color: var(--muted);
 }
-.type-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+.type-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 .type-btn[data-type="gate"].active { background: var(--gate-color); border-color: var(--gate-color); }
 
 /* ── Channel body ── */
@@ -258,12 +258,12 @@ main { padding: 20px; }
     font-weight: 700;
     font-size: 11px;
     letter-spacing: 1px;
-    border-color: #444;
+    border-color: var(--border);
     color: var(--muted);
     transition: background 0.1s, color 0.1s, border-color 0.1s;
 }
 .gate-trig:hover { border-color: var(--gate-color); color: var(--gate-color); }
-.gate-hold:hover { border-color: #888; color: var(--text); }
+.gate-hold:hover { border-color: var(--muted); color: var(--text); }
 .gate-hold.active { background: var(--gate-color); color: #000; border-color: var(--gate-color); }
 
 /* ── Meter ── */
@@ -277,7 +277,7 @@ main { padding: 20px; }
 .meter-bar {
     flex: 1;
     height: 3px;
-    background: #2a2a2a;
+    background: var(--surface2);
     border-radius: 2px;
     overflow: hidden;
 }
@@ -358,7 +358,7 @@ main { padding: 20px; }
 
 #seq-play.playing {
     background: var(--accent);
-    color: #000;
+    color: #fff;
     border-color: var(--accent);
 }
 
@@ -374,10 +374,10 @@ main { padding: 20px; }
     text-align: center;
     font-size: 14px;
     line-height: 1;
-    border-color: #444;
+    border-color: var(--border);
     color: var(--muted);
 }
-.seq-root-btn:hover { color: var(--text); border-color: #666; }
+.seq-root-btn:hover { color: var(--text); border-color: var(--muted); }
 
 #seq-root-display {
     font-size: 12px;
@@ -409,20 +409,13 @@ main { padding: 20px; }
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    user-select: none;
     transition: background 0.08s, border-color 0.08s;
     gap: 4px;
 }
 
-.seq-cell:hover {
-    border-color: #555;
-    background: #282828;
-}
-
 .seq-cell.playing {
     border-color: var(--accent);
-    background: #0d2a1e;
+    background: #d0efe3;
 }
 
 .seq-note {

@@ -116,6 +116,7 @@ function renderGate(ch, i) {
 
 const seqPlayBtn = document.getElementById('seq-play');
 const seqBpmInput = document.getElementById('seq-bpm');
+const seqLengthInput = document.getElementById('seq-length');
 const seqRootDisplay = document.getElementById('seq-root-display');
 
 const ROOT_OCTAVES = [
@@ -152,12 +153,6 @@ function buildSeqSteps() {
         cell.innerHTML = `
             <span class="seq-note">${isRest ? '—' : BP_NOTE_NAMES[s.note]}</span>
             <span class="seq-step-num">${i + 1}</span>`;
-        cell.addEventListener('click', () => {
-            if (s.note === null) s.note = 0;
-            else if (s.note >= 12) s.note = null;
-            else s.note++;
-            buildSeqSteps();
-        });
         container.appendChild(cell);
     });
 }
@@ -188,6 +183,15 @@ seqPlayBtn.addEventListener('click', () => {
 
 seqBpmInput.addEventListener('change', () => {
     seq.bpm = parseInt(seqBpmInput.value) || 120;
+});
+
+seqLengthInput.addEventListener('change', () => {
+    const len = Math.max(1, Math.min(16, parseInt(seqLengthInput.value) || 6));
+    seqLengthInput.value = len;
+    // Pad or trim the steps array
+    while (seq.steps.length < len) seq.steps.push({ note: 0, tritave: 0 });
+    seq.steps.length = len;
+    buildSeqSteps();
 });
 
 function updateSeqControls() {
