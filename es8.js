@@ -1,11 +1,9 @@
 import { normalizeVoltage, denormalizeVoltage } from './es8-utils.js';
 
-// 1V/oct base frequency: 0V = C3 (130.8 Hz) — keeps sim output in audible range
-const BASE_FREQ = 130.813;
 const SIM_GAIN = 0.12;
 
-function voltsToFreq(v) {
-    return BASE_FREQ * Math.pow(2, Math.max(0, v));
+function voltsToFreq(v, root) {
+    return root * Math.pow(2, Math.max(0, v));
 }
 
 export class ES8Controller {
@@ -16,6 +14,11 @@ export class ES8Controller {
         this.initialized = false;
         this.safeMode = true;
         this.simMode = false;
+        this.simFreqRoot = 130.813;  // C3 default
+    }
+
+    setSimFreqRoot(hz) {
+        this.simFreqRoot = Math.max(20, Math.min(4000, hz));
     }
 
     async connect(deviceId = null, { simulate = false } = {}) {
@@ -45,7 +48,7 @@ export class ES8Controller {
                 const osc = this.audioContext.createOscillator();
                 const gain = this.audioContext.createGain();
                 osc.type = 'sine';
-                osc.frequency.value = voltsToFreq(0);
+                osc.frequency.value = voltsToFreq(0, this.simFreqRoot);
                 gain.gain.value = 0;
                 osc.connect(gain);
                 gain.connect(analyser);
@@ -114,7 +117,7 @@ export class ES8Controller {
 
         if (this.simMode) {
             const slew = (slewMs !== null ? slewMs : ch.slewMs) / 1000;
-            const freq = voltsToFreq(v);
+            const freq = voltsToFreq(v, this.simFreqRoot);
             if (slew > 0) {
                 ch.osc.frequency.linearRampToValueAtTime(freq, t + slew);
             } else {

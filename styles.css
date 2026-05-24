@@ -362,6 +362,31 @@ main { padding: 20px; }
     border-color: var(--accent);
 }
 
+.seq-root-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.seq-root-btn {
+    width: 24px;
+    padding: 3px 0;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1;
+    border-color: #444;
+    color: var(--muted);
+}
+.seq-root-btn:hover { color: var(--text); border-color: #666; }
+
+#seq-root-display {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    min-width: 28px;
+    text-align: center;
+}
+
 .seq-ch-label {
     font-size: 10px;
     color: var(--muted);

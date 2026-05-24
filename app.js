@@ -116,6 +116,30 @@ function renderGate(ch, i) {
 
 const seqPlayBtn = document.getElementById('seq-play');
 const seqBpmInput = document.getElementById('seq-bpm');
+const seqRootDisplay = document.getElementById('seq-root-display');
+
+const ROOT_OCTAVES = [
+    { label: 'C1', hz: 32.703 },
+    { label: 'C2', hz: 65.406 },
+    { label: 'C3', hz: 130.813 },
+    { label: 'C4', hz: 261.626 },
+    { label: 'C5', hz: 523.251 },
+    { label: 'C6', hz: 1046.502 },
+];
+let rootIdx = 2; // C3
+
+function updateRoot() {
+    const r = ROOT_OCTAVES[rootIdx];
+    seqRootDisplay.textContent = r.label;
+    es8.setSimFreqRoot(r.hz);
+}
+
+document.getElementById('seq-root-dn').addEventListener('click', () => {
+    if (rootIdx > 0) { rootIdx--; updateRoot(); }
+});
+document.getElementById('seq-root-up').addEventListener('click', () => {
+    if (rootIdx < ROOT_OCTAVES.length - 1) { rootIdx++; updateRoot(); }
+});
 
 function buildSeqSteps() {
     const container = document.getElementById('seq-steps');
