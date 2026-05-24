@@ -34,6 +34,7 @@ const deviceSelect = document.getElementById('device-select');
 const connectBtn = document.getElementById('connect-btn');
 const statusDot = document.getElementById('status');
 const safeCheck = document.getElementById('safe-mode');
+const simCheck = document.getElementById('sim-mode');
 const panicBtn = document.getElementById('panic-btn');
 const channelsEl = document.getElementById('channels');
 
@@ -199,9 +200,10 @@ connectBtn.addEventListener('click', async () => {
     connectBtn.textContent = '…';
     setStatus('connecting', 'Connecting…');
     try {
-        await es8.connect(deviceSelect.value || null);
+        const simulate = simCheck.checked;
+        await es8.connect(simulate ? null : (deviceSelect.value || null), { simulate });
         connected = true;
-        setStatus('on', 'Connected');
+        setStatus(simulate ? 'sim' : 'on', simulate ? 'Simulation' : 'Connected');
         connectBtn.textContent = 'Disconnect';
         config.forEach((ch, i) => {
             if (ch.type === 'cv') es8.setCV(i, ch.cvValue || 0, 0);

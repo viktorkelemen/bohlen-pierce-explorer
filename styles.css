@@ -88,11 +88,33 @@ button:active { transform: translateY(1px); }
 .status.off    { color: #444; }
 .status.connecting { color: var(--gate-color); animation: blink 0.8s step-end infinite; }
 .status.on     { color: var(--accent); }
+.status.sim    { color: #7eb8ff; }
 .status.error  { color: var(--danger); }
 
 @keyframes blink { 50% { opacity: 0; } }
 
 /* ── Safe mode ── */
+
+.sim-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #7eb8ff;
+    cursor: pointer;
+    user-select: none;
+    font-size: 11px;
+}
+
+.sim-label input[type="checkbox"] {
+    accent-color: #7eb8ff;
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    appearance: auto;
+}
 
 .safe-label {
     display: flex;
