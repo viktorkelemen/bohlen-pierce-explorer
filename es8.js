@@ -1,7 +1,7 @@
 import { normalizeVoltage, denormalizeVoltage } from './es8-utils.js';
 
-// 1V/oct base frequency: 0V = C1 (32.7 Hz)
-const BASE_FREQ = 32.703;
+// 1V/oct base frequency: 0V = C3 (130.8 Hz) — keeps sim output in audible range
+const BASE_FREQ = 130.813;
 const SIM_GAIN = 0.12;
 
 function voltsToFreq(v) {

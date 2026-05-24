@@ -47,7 +47,10 @@ export class BPSequencer {
             if (s && s.note !== null) {
                 const volts = bpNoteToVolts(s.note, s.tritave || 0);
                 this.es8.setCV(this.pitchCh, volts, 0, t);
-                this.es8.triggerGate(this.gateCh, this.gateWidthMs, 5, t);
+                // In sim mode both pitch and gate share the same oscillator channel
+                // so triggerGate cancels the continuous gain from setCV and creates a clean burst
+                const gateCh = this.es8.simMode ? this.pitchCh : this.gateCh;
+                this.es8.triggerGate(gateCh, this.gateWidthMs, 5, t);
             }
 
             // Notify UI at the moment the step fires
