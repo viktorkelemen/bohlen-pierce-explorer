@@ -1,6 +1,7 @@
 import { es8 } from './es8.js';
 import { BPSequencer } from './sequencer.js';
 import { BP_NOTE_NAMES } from './bp-scale.js';
+import { generateMotive } from './bp-markov.js';
 
 const STORAGE_KEY = 'es8-channel-config';
 
@@ -179,6 +180,12 @@ seqPlayBtn.addEventListener('click', () => {
     } else {
         seqStop();
     }
+});
+
+document.getElementById('seq-generate').addEventListener('click', () => {
+    const notes = generateMotive(seq.stepCount);
+    notes.forEach((n, i) => { seq.steps[i].note = n; seq.steps[i].tritave = 0; });
+    buildSeqSteps();
 });
 
 seqBpmInput.addEventListener('change', () => {
