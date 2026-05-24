@@ -112,6 +112,14 @@ describe('connect — hardware mode', () => {
         await ctrl.connect(null);
         expect(mockCtx.setSinkId).not.toHaveBeenCalled();
     });
+
+    it('cleans up and throws if setSinkId rejects', async () => {
+        mockCtx.setSinkId.mockRejectedValueOnce(new Error('device error'));
+        await expect(ctrl.connect('bad-id')).rejects.toThrow('device error');
+        expect(ctrl.initialized).toBe(false);
+        expect(ctrl.channels).toHaveLength(0);
+        expect(mockCtx.close).toHaveBeenCalled();
+    });
 });
 
 // ── connect (simulate) ────────────────────────────────────────────────────────
@@ -167,6 +175,12 @@ describe('setCV — hardware mode', () => {
         expect(call[0]).toBe(1); // normaliseVoltage(10) = 1
     });
 
+    it('caps at 10V when safe mode off and volts > 10', () => {
+        ctrl.setSafeMode(false);
+        ctrl.setCV(0, 15, 0);
+        expect(ctrl.getVoltage(0)).toBe(10);
+    });
+
     it('stores the voltage for getVoltage', () => {
         ctrl.setCV(0, 3, 0);
         expect(ctrl.getVoltage(0)).toBe(3);
@@ -214,6 +228,12 @@ describe('setGate', () => {
         ctrl.setGate(0, false);
         expect(ctrl.getVoltage(0)).toBe(0);
     });
+
+    it('caps gate voltage at 10V when safe mode off', () => {
+        ctrl.setSafeMode(false);
+        ctrl.setGate(0, true, 15);
+        expect(ctrl.getVoltage(0)).toBe(10);
+    });
 });
 
 // ── triggerGate ───────────────────────────────────────────────────────────────
@@ -229,6 +249,12 @@ describe('triggerGate', () => {
     it('cancels previous scheduled values first', () => {
         ctrl.triggerGate(0, 10);
         expect(ctrl.channels[0].cvSource.offset.cancelScheduledValues).toHaveBeenCalled();
+    });
+
+    it('caps gate voltage at 10V when safe mode off', () => {
+        ctrl.setSafeMode(false);
+        ctrl.triggerGate(0, 10, 15);
+        expect(ctrl.getVoltage(0)).toBe(10);
     });
 });
 
@@ -287,6 +313,16 @@ describe('disconnect', () => {
 
     it('is a no-op when not initialised', async () => {
         await expect(ctrl.disconnect()).resolves.toBeUndefined();
+    });
+
+    it('still closes AudioContext even if one node stop() throws', async () => {
+        await ctrl.connect();
+        ctrl.channels[2].cvSource.stop.mockImplementationOnce(() => {
+            throw new Error('already stopped');
+        });
+        await ctrl.disconnect();
+        expect(mockCtx.close).toHaveBeenCalled();
+        expect(ctrl.initialized).toBe(false);
     });
 });
 

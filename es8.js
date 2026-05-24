@@ -62,42 +62,47 @@ export class ES8Controller {
             }
         });
 
-        if (!simulate) {
-            this.channels.forEach((ch, i) => {
-                ch.analyser.connect(this.merger, 0, i);
-                ch.cvSource.start();
-            });
-            if (deviceId && this.audioContext.setSinkId) {
-                await this.audioContext.setSinkId(deviceId);
+        try {
+            if (!simulate) {
+                this.channels.forEach((ch, i) => {
+                    ch.analyser.connect(this.merger, 0, i);
+                    ch.cvSource.start();
+                });
+                if (deviceId && this.audioContext.setSinkId) {
+                    await this.audioContext.setSinkId(deviceId);
+                }
             }
-        }
 
-        await this.audioContext.resume();
-        this.initialized = true;
+            await this.audioContext.resume();
+            this.initialized = true;
+        } catch (err) {
+            await this._cleanup();
+            throw err;
+        }
+    }
+
+    async _cleanup() {
+        this.channels.forEach(ch => {
+            try {
+                if (this.simMode) { ch.osc.stop(); ch.osc.disconnect(); }
+                else { ch.cvSource.stop(); ch.cvSource.disconnect(); }
+                ch.gain.disconnect();
+                ch.analyser.disconnect();
+            } catch {}
+        });
+        this.channels = [];
+        if (this.merger) { this.merger.disconnect(); this.merger = null; }
+        if (this.audioContext) {
+            await this.audioContext.close();
+            this.audioContext = null;
+        }
     }
 
     async disconnect() {
         if (!this.initialized) return;
-        this.panic();
-        this.channels.forEach(ch => {
-            if (this.simMode) {
-                ch.osc.stop();
-                ch.osc.disconnect();
-            } else {
-                ch.cvSource.stop();
-                ch.cvSource.disconnect();
-            }
-            ch.gain.disconnect();
-            ch.analyser.disconnect();
-        });
-        if (this.merger) {
-            this.merger.disconnect();
-            this.merger = null;
-        }
-        await this.audioContext.close();
-        this.channels = [];
-        this.audioContext = null;
         this.initialized = false;
+        this.panic();
+        await this._cleanup();
     }
 
     setCV(channel, volts, slewMs = null) {
@@ -131,7 +136,7 @@ export class ES8Controller {
     triggerGate(channel, widthMs = null, volts = 5.0) {
         if (!this.initialized || channel < 0 || channel > 7) return;
         const ch = this.channels[channel];
-        const v = this.safeMode ? Math.min(volts, 5) : volts;
+        const v = this.safeMode ? Math.min(volts, 5) : Math.min(volts, 10);
         const width = (widthMs !== null ? widthMs : ch.gateWidth) / 1000;
         const t = this.audioContext.currentTime;
 
@@ -153,7 +158,7 @@ export class ES8Controller {
     setGate(channel, on, volts = 5.0) {
         if (!this.initialized || channel < 0 || channel > 7) return;
         const ch = this.channels[channel];
-        const v = this.safeMode ? Math.min(volts, 5) : volts;
+        const v = this.safeMode ? Math.min(volts, 5) : Math.min(volts, 10);
         const t = this.audioContext.currentTime;
         ch.volts = on ? v : 0;
 

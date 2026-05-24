@@ -12,12 +12,27 @@ const defaultConfig = () => Array.from({ length: 8 }, (_, i) => ({
     gateHeld: false,
 }));
 
+function sanitizeChannel(ch, i) {
+    const def = defaultConfig()[i];
+    return {
+        label: typeof ch.label === 'string' ? ch.label : def.label,
+        type: ch.type === 'cv' || ch.type === 'gate' ? ch.type : def.type,
+        range: Array.isArray(ch.range) && ch.range.length === 2 ? ch.range : def.range,
+        slewMs: Number.isFinite(+ch.slewMs) ? +ch.slewMs : def.slewMs,
+        gateWidth: Number.isFinite(+ch.gateWidth) ? +ch.gateWidth : def.gateWidth,
+        cvValue: Number.isFinite(+ch.cvValue) ? +ch.cvValue : 0,
+        gateHeld: typeof ch.gateHeld === 'boolean' ? ch.gateHeld : false,
+    };
+}
+
 function loadConfig() {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
             const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed) && parsed.length === 8) return parsed;
+            if (Array.isArray(parsed) && parsed.length === 8) {
+                return parsed.map(sanitizeChannel);
+            }
         }
     } catch {}
     return defaultConfig();
